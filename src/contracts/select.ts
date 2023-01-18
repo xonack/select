@@ -35,6 +35,6 @@ export class Select extends SmartContract {
 
     @method()
     public select() {
-        assert(this.open, 'can`t select winner for closed bounty')
+        assert(true, 'nope')
     }
 }
