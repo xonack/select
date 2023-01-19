@@ -41,6 +41,16 @@ export class Select extends SmartContract {
     public select(sig: Sig, winner: PubKeyHash) {
         assert(this.open, 'can`t select winner for closed bounty')
         assert(this.checkSig(sig, this.maker), 'signature check failed')
+        let isHunter = false
+        for (let i = 0; i < 3; i++) {
+            if (this.hunters[i] === winner) {
+                isHunter = true
+            }
+        }
+        assert(
+            isHunter,
+            'selected winner did not submit content for the bounty'
+        )
         this.open = false
         assert(!this.open, 'bounty failed to close')
     }
