@@ -20,7 +20,6 @@ describe('Test SmartContract `Select`', () => {
 
     it('should pass with valid hunter', async () => {
         // constructor arguments
-        const tx = newTx()
         const inputIndex = 1
         const utxos = [dummyUTXO]
         const privateKey = bsv.PrivateKey.fromRandom('testnet')
@@ -36,12 +35,12 @@ describe('Test SmartContract `Select`', () => {
         const deployTx = demo.getDeployTx(utxos, 1)
         // unlockFrom
         // demo.unlockFrom = { tx, inputIndex }
-        const makerSig = signTx(
-            tx,
-            privateKey,
-            demo.lockingScript,
-            inputSatoshis
-        )
+        // const makerSig = signTx(
+        //     tx,
+        //     privateKey,
+        //     demo.lockingScript,
+        //     inputSatoshis
+        // )
         const newSelect = demo.next()
         newSelect.winner = hunter2
         newSelect.open = false
@@ -49,11 +48,15 @@ describe('Test SmartContract `Select`', () => {
             utxos,
             deployTx,
             newSelect,
-            Sig(toHex(makerSig)),
+            // Sig(toHex(makerSig)),
+            privateKey,
             hunter2
         )
         const result = demo.verify((self) => {
-            self.select(Sig(toHex(makerSig)), hunter2)
+            self.select(
+                Sig(selectTx.getSignature(inputIndex) as string),
+                hunter2
+            )
         })
         expect(result.success, result.error).to.be.true
     })

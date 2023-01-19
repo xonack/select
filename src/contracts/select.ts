@@ -40,10 +40,7 @@ export class Select extends SmartContract {
     @method()
     public select(sig: Sig, winner: PubKeyHash) {
         assert(this.open, 'can`t select winner for closed bounty')
-        assert(
-            this.checkSig(sig, this.maker),
-            'only bounty maker can select winner - check signature'
-        )
+        assert(this.checkSig(sig, this.maker), 'signature check failed')
         this.open = false
         assert(!this.open, 'bounty failed to close')
     }
@@ -64,25 +61,38 @@ export class Select extends SmartContract {
         utxos: UTXO[],
         prevTx: bsv.Transaction,
         nextInst: Select,
-        sig: Sig,
+        // sig: Sig,
+        privateKey: bsv.PrivateKey,
         winner: PubKeyHash
     ): bsv.Transaction {
         const inputIndex = 1
-        return new bsv.Transaction()
-            .from(utxos)
-            .addInputFromPrevTx(prevTx)
-            .setOutput(0, (tx: bsv.Transaction) => {
-                nextInst.lockTo = { tx, outputIndex: 0 }
-                return new bsv.Transaction.Output({
-                    script: nextInst.lockingScript,
-                    satoshis: this.balance,
+        return (
+            new bsv.Transaction()
+                .from(utxos)
+                .addInputFromPrevTx(prevTx)
+                .setOutput(0, (tx: bsv.Transaction) => {
+                    nextInst.lockTo = { tx, outputIndex: 0 }
+                    return new bsv.Transaction.Output({
+                        script: nextInst.lockingScript,
+                        satoshis: this.balance,
+                    })
                 })
-            })
-            .setInputScript(inputIndex, (tx: bsv.Transaction) => {
-                this.unlockFrom = { tx, inputIndex }
-                return this.getUnlockingScript((self) => {
-                    self.select(sig, winner)
-                })
-            })
+                // .setInputScript(inputIndex, (tx: bsv.Transaction) => {
+                .setInputScript(
+                    {
+                        inputIndex,
+                        privateKey,
+                    },
+                    (tx: bsv.Transaction) => {
+                        this.unlockFrom = { tx, inputIndex }
+                        return this.getUnlockingScript((self) => {
+                            self.select(
+                                Sig(tx.getSignature(inputIndex) as string),
+                                winner
+                            )
+                        })
+                    }
+                )
+        )
     }
 }
