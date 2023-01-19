@@ -36,7 +36,12 @@ describe('Test SmartContract `Select`', () => {
         const deployTx = demo.getDeployTx(utxos, 1)
         // unlockFrom
         // demo.unlockFrom = { tx, inputIndex }
-        const makerSig = signTx(tx, privateKey, demo.lockingScript, inputSatoshis)
+        const makerSig = signTx(
+            tx,
+            privateKey,
+            demo.lockingScript,
+            inputSatoshis
+        )
         const newSelect = demo.next()
         newSelect.winner = hunter2
         newSelect.open = false
@@ -52,33 +57,4 @@ describe('Test SmartContract `Select`', () => {
         })
         expect(result.success, result.error).to.be.true
     })
-
-    // // fails when accessing stateful variables - probably does not properly handle preimage
-    // it('should pass with valid hunter', async () => {
-    //     const inputIndex = 0;
-    //     const tx = newTx()
-    //     // constructor arguments
-    //     const privateKey = bsv.PrivateKey.fromRandom('testnet')
-    //     const publicKey = bsv.PublicKey.fromPrivateKey(privateKey)
-    //     const pubKey = PubKey(toHex(publicKey))
-    //     const hunter1: Ripemd160 = Ripemd160(toByteString('01'))
-    //     const hunter2: Ripemd160 = Ripemd160(toByteString('02'))
-    //     const hunter3: Ripemd160 = Ripemd160(toByteString('03'))
-    //     const hunters: FixedArray<PubKeyHash, 3> = [hunter1, hunter2, hunter3]
-    //     // create a genesis instance
-    //     const demo = new Select(pubKey, hunters)
-    //     // unlockFrom
-    //     demo.unlockFrom = { tx, inputIndex }
-    //     const result = demo.verify(() => {
-    //         const makerSig = signTx(
-    //             tx,
-    //             privateKey,
-    //             demo.lockingScript,
-    //             inputSatoshis
-    //         );
-    //         demo.select(Sig(toHex(makerSig)), hunter2);
-    //         // demo.select();
-    //     })
-    //     expect(result.success, result.error).to.be.true
-    // })
 })

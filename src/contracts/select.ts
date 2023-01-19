@@ -37,11 +37,6 @@ export class Select extends SmartContract {
         this.winner = Ripemd160(toByteString('00'))
     }
 
-    // @method()
-    // public select() {
-    //     assert(this.open, 'nope')
-    // }
-
     @method()
     public select(sig: Sig, winner: PubKeyHash) {
         assert(this.open, 'can`t select winner for closed bounty')
@@ -49,20 +44,8 @@ export class Select extends SmartContract {
             this.checkSig(sig, this.maker),
             'only bounty maker can select winner - check signature'
         )
-        // let isHunter = false;
-        // for(let i = 0; i < 3; i++) {
-        //     if(this.hunters[i] === winner){
-        //         isHunter = true;
-        //     }
-        // }
-        // assert(isHunter, 'selected winner did not submit content for the bounty');
-        // this.winner = winner;
-        // TODO send amount to winner
-        // create output for a P2PKH to winner
-        // close bounty
         this.open = false
         assert(!this.open, 'bounty failed to close')
-        // assert(this.ctx.hashOutputs == hash256(this.buildStateOutput(this.ctx.utxo.value)), 'not paying fee from utxos');
     }
 
     getDeployTx(utxos: UTXO[], initBalance: number): bsv.Transaction {
