@@ -61,7 +61,6 @@ export class Select extends SmartContract {
         utxos: UTXO[],
         prevTx: bsv.Transaction,
         nextInst: Select,
-        // sig: Sig,
         privateKey: bsv.PrivateKey,
         winner: PubKeyHash
     ): bsv.Transaction {
