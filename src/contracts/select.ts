@@ -66,33 +66,30 @@ export class Select extends SmartContract {
         winner: PubKeyHash
     ): bsv.Transaction {
         const inputIndex = 1
-        return (
-            new bsv.Transaction()
-                .from(utxos)
-                .addInputFromPrevTx(prevTx)
-                .setOutput(0, (tx: bsv.Transaction) => {
-                    nextInst.lockTo = { tx, outputIndex: 0 }
-                    return new bsv.Transaction.Output({
-                        script: nextInst.lockingScript,
-                        satoshis: this.balance,
-                    })
+        return new bsv.Transaction()
+            .from(utxos)
+            .addInputFromPrevTx(prevTx)
+            .setOutput(0, (tx: bsv.Transaction) => {
+                nextInst.lockTo = { tx, outputIndex: 0 }
+                return new bsv.Transaction.Output({
+                    script: nextInst.lockingScript,
+                    satoshis: this.balance,
                 })
-                // .setInputScript(inputIndex, (tx: bsv.Transaction) => {
-                .setInputScript(
-                    {
-                        inputIndex,
-                        privateKey,
-                    },
-                    (tx: bsv.Transaction) => {
-                        this.unlockFrom = { tx, inputIndex }
-                        return this.getUnlockingScript((self) => {
-                            self.select(
-                                Sig(tx.getSignature(inputIndex) as string),
-                                winner
-                            )
-                        })
-                    }
-                )
-        )
+            })
+            .setInputScript(
+                {
+                    inputIndex,
+                    privateKey,
+                },
+                (tx: bsv.Transaction) => {
+                    this.unlockFrom = { tx, inputIndex }
+                    return this.getUnlockingScript((self) => {
+                        self.select(
+                            Sig(tx.getSignature(inputIndex) as string),
+                            winner
+                        )
+                    })
+                }
+            )
     }
 }

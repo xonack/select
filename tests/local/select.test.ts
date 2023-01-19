@@ -33,14 +33,6 @@ describe('Test SmartContract `Select`', () => {
         const demo = new Select(pubKey, hunters).markAsGenesis()
         // construct a transaction for deployment
         const deployTx = demo.getDeployTx(utxos, 1)
-        // unlockFrom
-        // demo.unlockFrom = { tx, inputIndex }
-        // const makerSig = signTx(
-        //     tx,
-        //     privateKey,
-        //     demo.lockingScript,
-        //     inputSatoshis
-        // )
         const newSelect = demo.next()
         newSelect.winner = hunter2
         newSelect.open = false
@@ -48,7 +40,6 @@ describe('Test SmartContract `Select`', () => {
             utxos,
             deployTx,
             newSelect,
-            // Sig(toHex(makerSig)),
             privateKey,
             hunter2
         )
